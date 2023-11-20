@@ -1,6 +1,16 @@
 require "sinatra"
 require "sinatra/reloader"
 
+def calculate_monthly_payment(principal, apr, years)
+  monthly_rate = apr / 12
+  months = years * 12
+  principal * (monthly_rate / (1 - (1 + monthly_rate) ** -months))
+end
+def format_currency(amount)
+  sprintf("$%.2f", amount)
+end
+
+
 get("/") do
   erb(:square)
 end
@@ -22,14 +32,14 @@ get("/random/new") do
 end
 
 get("/square/result") do
-  number = params[:square].to_i
+  number = params[:square].to_f.round(2)
   square = number ** 2
   @number = number
   @result = square
   erb(:squareresult)
 end
 get("/squareroot/result") do
-  number = params[:squareroot].to_i
+  number = params[:squareroot].to_f.round(2)
   square_root = Math.sqrt(number)
   @number = number
   @result = square_root
@@ -47,18 +57,18 @@ get("/random/result") do
 end
 
 get("/payment/result") do
-  principal = params[:principal].to_f.round(2)
-  annual_rate = params[:apr].to_f
-  apr = annual_rate / 100
+  principal = params[:principal].to_f
+  apr = params[:apr].to_f / 100 # Convert to rate
   years = params[:years].to_i
 
-  monthly_rate = apr / 12
-  total_payments = years * 12
-  monthly_payment = principal * (monthly_rate * (1 + monthly_rate)**total_payments) / ((1 + monthly_rate)**total_payments - 1)
+  monthly_payment = calculate_monthly_payment(principal, apr, years)
 
-  @principal = principal
-  @apr = annual_rate.round(4)
+  # Format outputs
+  @monthly_payment_display = monthly_payment.to_fs(:currency)
+  @apr_display = (apr * 100).to_fs(:percentage, precision: 4)
+  @principal_display = principal.to_fs(:currency)
   @years = years
-  @result = monthly_payment.round(2)
-  erb(:paymentresult)
+
+  erb :paymentresult
 end
+

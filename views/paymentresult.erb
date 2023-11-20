@@ -1,8 +1,6 @@
 <h1>Payment Results</h1>
-
-<p>APR <%= @apr %>%</p>
-<p>Number of years <%= @years %></p>
-<p>Pricipal $<%= @principal %></p>
-<p>Payment $<%= @result %></p>
-
+<p>APR: <%= @apr_display %></p>
+<p>Number of years: <%= @years %></p>
+<p>Principal: <%= @principal_display %></p>
+<p>Monthly Payment: <%= @monthly_payment_display %></p>
 <a href="/payment/new">Calculate another payment</a>
