@@ -35,3 +35,30 @@ get("/squareroot/result") do
   @result = square_root
   erb(:squarerootresult)
 end
+
+get("/random/result") do
+  min = params[:min].to_f
+  max = params[:max].to_f
+  random_number = rand(min..max).round(17)
+  @min = min
+  @max = max
+  @result = random_number
+  erb(:randomresult)
+end
+
+get("/payment/result") do
+  principal = params[:principal].to_f.round(2)
+  annual_rate = params[:apr].to_f
+  apr = annual_rate / 100
+  years = params[:years].to_i
+
+  monthly_rate = apr / 12
+  total_payments = years * 12
+  monthly_payment = principal * (monthly_rate * (1 + monthly_rate)**total_payments) / ((1 + monthly_rate)**total_payments - 1)
+
+  @principal = principal
+  @apr = annual_rate.round(4)
+  @years = years
+  @result = monthly_payment.round(2)
+  erb(:paymentresult)
+end
